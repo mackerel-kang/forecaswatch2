@@ -16,6 +16,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    # resvg is only used by screenshot compositing, not by `pebble build`, and its
+    # entry in mise.lock has no linux-x64 URL (locked-mode install fails). Skip it.
+    env:
+      MISE_DISABLE_TOOLS: resvg
     steps:
       - name: Check out repository
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
