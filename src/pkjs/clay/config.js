@@ -140,7 +140,7 @@ module.exports = [
             },
             {
                 "type": "color",
-                "label": "US federal holidays color",
+                "label": "KR holidays color",
                 "messageKey": "colorUSFederal",
                 "defaultValue": "#FF0055",
                 "description": "White means disable",
