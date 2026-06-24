@@ -6,6 +6,12 @@
 
 #define BATTERY_W 29
 #define BATTERY_H 10
+// Extra width reserved to the left of the battery glyph for the percentage number.
+#ifdef PBL_PLATFORM_EMERY
+#define BATTERY_PCT_W 24
+#else
+#define BATTERY_PCT_W 20
+#endif
 #define PADDING 4
 #define MONTH_FONT_OFFSET 7
 #define ICON_SLOT_1 GRect(PADDING, 0, 10, 10)
@@ -157,8 +163,11 @@ void calendar_status_layer_create(Layer* parent_layer, GRect frame) {
     layer_set_update_proc(s_calendar_status_layer, calendar_status_update_proc);
     MEMORY_HEAP_PROBE_SAMPLE("after_update_proc_set", &probe);
 
+    // Full row height so the battery layer can vertically center both the
+    // percentage number and the (shorter) battery glyph itself.
     battery_layer_create(s_calendar_status_layer,
-                         GRect(w - BATTERY_W - PADDING, BATTERY_Y(bounds.size.h), BATTERY_W, BATTERY_H));
+                         GRect(w - BATTERY_W - BATTERY_PCT_W - PADDING, 0,
+                               BATTERY_W + BATTERY_PCT_W, bounds.size.h));
     MEMORY_HEAP_PROBE_SAMPLE("after_battery_layer_create", &probe);
 
     layer_add_child(parent_layer, s_calendar_status_layer);
