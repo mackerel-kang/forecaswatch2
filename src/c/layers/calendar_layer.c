@@ -4,19 +4,19 @@
 #include "c/services/watch_services.h"
 #include <time.h>
 
-#define NUM_WEEKS 3
+#define NUM_WEEKS 4
 #define DAYS_PER_WEEK 7
-#define FONT_OFFSET 5
-#define EMERY_CALENDAR_TEXT_SHIFT_Y 5
+#define FONT_OFFSET 3
+#define EMERY_CALENDAR_TEXT_SHIFT_Y 3
 #define EMERY_CALENDAR_TEXT_SHIFT_X 1
 
-// emery: render calendar dates with larger fonts
+// 4-week calendar: shrink fonts so the extra row fits the same vertical band.
 #ifdef PBL_PLATFORM_EMERY
-#define CALENDAR_FONT_KEY FONT_KEY_GOTHIC_24
-#define CALENDAR_FONT_KEY_BOLD FONT_KEY_GOTHIC_24_BOLD
-#else
 #define CALENDAR_FONT_KEY FONT_KEY_GOTHIC_18
 #define CALENDAR_FONT_KEY_BOLD FONT_KEY_GOTHIC_18_BOLD
+#else
+#define CALENDAR_FONT_KEY FONT_KEY_GOTHIC_14
+#define CALENDAR_FONT_KEY_BOLD FONT_KEY_GOTHIC_14_BOLD
 #endif
 
 static Layer *s_calendar_layer;
