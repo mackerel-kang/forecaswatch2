@@ -15,6 +15,8 @@
 #define BATTERY_GLYPH_W 29
 #define BATTERY_GLYPH_H 10
 #define PCT_TEXT_GAP 2
+// Shift the right-aligned percentage toward the icon (into the empty charging slot).
+#define PCT_TEXT_X_SHIFT 5
 #define PCT_TEXT_Y_NUDGE 5
 #define BATTERY_PCT_FONT_KEY FONT_KEY_GOTHIC_14
 
@@ -88,7 +90,7 @@ static void battery_update_proc(Layer *layer, GContext *ctx) {
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(
         ctx, pct_buffer, fonts_get_system_font(BATTERY_PCT_FONT_KEY),
-        GRect(0, glyph_top - PCT_TEXT_Y_NUDGE, glyph_left - PCT_TEXT_GAP, BATTERY_GLYPH_H + PCT_TEXT_Y_NUDGE * 2),
+        GRect(0, glyph_top - PCT_TEXT_Y_NUDGE, glyph_left - PCT_TEXT_GAP + PCT_TEXT_X_SHIFT, BATTERY_GLYPH_H + PCT_TEXT_Y_NUDGE * 2),
         GTextOverflowModeFill, GTextAlignmentRight, NULL);
 
     int battery_x = glyph_left + BATTERY_POWER_ICON_W + ICON_SPACING;
