@@ -101,8 +101,8 @@ GFont config_time_font() {
     const char *font_keys[] = {
         [TIME_FONT_ROBOTO] = FONT_KEY_ROBOTO_BOLD_SUBSET_49,
 #ifdef PBL_PLATFORM_EMERY
-        // emery: use larger LECO font size
-        [TIME_FONT_LECO] = FONT_KEY_LECO_60_NUMBERS_AM_PM,
+        // emery: sized-down LECO time font (was LECO_60)
+        [TIME_FONT_LECO] = FONT_KEY_LECO_42_NUMBERS,
 #else
         [TIME_FONT_LECO] = FONT_KEY_LECO_42_NUMBERS,
 #endif
