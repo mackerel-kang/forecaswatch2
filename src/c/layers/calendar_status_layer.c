@@ -8,9 +8,9 @@
 #define BATTERY_H 10
 // Extra width reserved to the left of the battery glyph for the percentage number.
 #ifdef PBL_PLATFORM_EMERY
-#define BATTERY_PCT_W 24
+#define BATTERY_PCT_W 34
 #else
-#define BATTERY_PCT_W 20
+#define BATTERY_PCT_W 28
 #endif
 #define PADDING 4
 #define MONTH_FONT_OFFSET 7
@@ -20,11 +20,11 @@
 #ifdef PBL_PLATFORM_EMERY
 #define STATUS_ICON_Y(bounds_h, icon_h) (((bounds_h) - (icon_h)) / 2)
 #define BATTERY_Y(bounds_h) (((bounds_h) - BATTERY_H) / 2)
-#define MONTH_FONT_KEY FONT_KEY_GOTHIC_24
+#define MONTH_FONT_KEY FONT_KEY_GOTHIC_18_BOLD
 #else
 #define STATUS_ICON_Y(bounds_h, icon_h) ((void)(bounds_h), (void)(icon_h), 0)
 #define BATTERY_Y(bounds_h) ((void)(bounds_h), 1)
-#define MONTH_FONT_KEY FONT_KEY_GOTHIC_18
+#define MONTH_FONT_KEY FONT_KEY_GOTHIC_14_BOLD
 #endif
 
 static Layer *s_calendar_status_layer;
@@ -42,7 +42,7 @@ static GRect month_text_rect(GRect bounds, GFont font) {
     const GRect measure_box = GRect(0, 0, bounds.size.w, bounds.size.h);
     const GSize text_size = graphics_text_layout_get_content_size(
         s_calendar_month_text, font, measure_box, GTextOverflowModeFill, GTextAlignmentCenter);
-    const int text_y = ((bounds.size.h - text_size.h) / 2) - 5;
+    const int text_y = ((bounds.size.h - text_size.h) / 2) - 3;
     return GRect(0, text_y, bounds.size.w, text_size.h + 3);
 #else
     (void)font;

@@ -15,7 +15,7 @@
 #define BATTERY_GLYPH_W 29
 #define BATTERY_GLYPH_H 10
 #define PCT_TEXT_GAP 2
-#define PCT_TEXT_Y_NUDGE 3
+#define PCT_TEXT_Y_NUDGE 5
 #define BATTERY_PCT_FONT_KEY FONT_KEY_GOTHIC_14
 
 
@@ -83,8 +83,8 @@ static void battery_update_proc(Layer *layer, GContext *ctx) {
     int glyph_top = (h - BATTERY_GLYPH_H) / 2;
 
     // Draw the battery percentage, right-aligned just left of the glyph
-    char pct_buffer[5];
-    snprintf(pct_buffer, sizeof(pct_buffer), "%d", battery_level);
+    char pct_buffer[6];
+    snprintf(pct_buffer, sizeof(pct_buffer), "%d%%", battery_level);
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(
         ctx, pct_buffer, fonts_get_system_font(BATTERY_PCT_FONT_KEY),
