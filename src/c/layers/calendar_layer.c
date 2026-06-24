@@ -173,7 +173,7 @@ static void calendar_update_proc(Layer *layer, GContext *ctx) {
 
     graphics_context_set_fill_color(ctx, today_color());
     graphics_fill_rect(ctx,
-        GRect((i_today % DAYS_PER_WEEK) * w / DAYS_PER_WEEK, (i_today / DAYS_PER_WEEK) * h / NUM_WEEKS,
+        GRect((i_today % DAYS_PER_WEEK) * w / DAYS_PER_WEEK, (i_today / DAYS_PER_WEEK) * h / NUM_WEEKS + 1,
         box_w, box_h), 1, GCornersAll);
 
     for (int i = 0; i < NUM_WEEKS * DAYS_PER_WEEK; ++i) {
