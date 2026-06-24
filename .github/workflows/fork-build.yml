@@ -43,10 +43,19 @@ jobs:
       - name: Verify artifact exists
         run: test -f build/forecaswatch2-dev.pbw
 
+      - name: Stamp .pbw with git revision
+        id: rev
+        shell: bash
+        run: |
+          set -euo pipefail
+          short="$(git rev-parse --short HEAD)"
+          echo "short=$short" >> "$GITHUB_OUTPUT"
+          cp build/forecaswatch2-dev.pbw "build/forecaswatch2-dev-${short}.pbw"
+
       - name: Upload .pbw artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: forecaswatch2-dev-pbw
-          path: build/forecaswatch2-dev.pbw
+          name: forecaswatch2-dev-pbw-${{ steps.rev.outputs.short }}
+          path: build/forecaswatch2-dev-${{ steps.rev.outputs.short }}.pbw
           if-no-files-found: error
           retention-days: 14
