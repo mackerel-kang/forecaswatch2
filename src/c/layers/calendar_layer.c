@@ -76,11 +76,9 @@ static struct tm relative_tm(int days_from_today)
     return out;
 }
 
-static bool is_korea_holiday(struct tm *t)
+static bool is_korea_fixed_holiday(struct tm *t)
 {
-    // Fixed-date South Korean public holidays (solar calendar only).
-    // Lunar holidays (Seollal, Buddha's Birthday, Chuseok) can't be derived
-    // from a Gregorian date alone, so they are not included here.
+    // Fixed-date (solar) South Korean public holidays.
     int mon = t->tm_mon + 1;  // tm_mon is 0-based
     int day = t->tm_mday;
     switch (mon) {
@@ -94,6 +92,50 @@ static bool is_korea_holiday(struct tm *t)
         case 12: return day == 25;             // Christmas
         default: return false;
     }
+}
+
+static bool is_korea_lunar_holiday(struct tm *t)
+{
+    // Lunar-based holidays vary by Gregorian year, so they are tabulated per year
+    // (2026-2030). Seollal and Chuseok cover the 3-day block (eve, main, next day);
+    // Buddha's Birthday is a single day. Weekend substitute holidays (대체공휴일)
+    // are not included.
+    int y = t->tm_year + 1900;
+    int m = t->tm_mon + 1;
+    int d = t->tm_mday;
+    switch (y) {
+        case 2026:
+            if (m == 2  && d >= 16 && d <= 18) return true; // Seollal
+            if (m == 5  && d == 24)            return true; // Buddha's Birthday
+            if (m == 9  && d >= 24 && d <= 26) return true; // Chuseok
+            break;
+        case 2027:
+            if (m == 2  && d >= 5  && d <= 7)  return true; // Seollal
+            if (m == 5  && d == 13)            return true; // Buddha's Birthday
+            if (m == 9  && d >= 14 && d <= 16) return true; // Chuseok
+            break;
+        case 2028:
+            if (m == 1  && d >= 25 && d <= 27) return true; // Seollal
+            if (m == 5  && d == 2)             return true; // Buddha's Birthday
+            if (m == 10 && d >= 2  && d <= 4)  return true; // Chuseok
+            break;
+        case 2029:
+            if (m == 2  && d >= 12 && d <= 14) return true; // Seollal
+            if (m == 5  && d == 20)            return true; // Buddha's Birthday
+            if (m == 9  && d >= 21 && d <= 23) return true; // Chuseok
+            break;
+        case 2030:
+            if (m == 2  && d >= 2  && d <= 4)  return true; // Seollal
+            if (m == 5  && d == 9)             return true; // Buddha's Birthday
+            if (m == 9  && d >= 11 && d <= 13) return true; // Chuseok
+            break;
+    }
+    return false;
+}
+
+static bool is_korea_holiday(struct tm *t)
+{
+    return is_korea_fixed_holiday(t) || is_korea_lunar_holiday(t);
 }
 
 #ifdef PBL_COLOR
