@@ -16,7 +16,7 @@
 #define BATTERY_GLYPH_H 10
 #define PCT_TEXT_GAP 2
 // Shift the right-aligned percentage toward the icon (into the empty charging slot).
-#define PCT_TEXT_X_SHIFT 5
+#define PCT_TEXT_X_SHIFT 7
 #define PCT_TEXT_Y_NUDGE 5
 #define BATTERY_PCT_FONT_KEY FONT_KEY_GOTHIC_14
 

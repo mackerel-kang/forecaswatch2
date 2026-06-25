@@ -13,10 +13,11 @@
 #define HEALTH_FONT_KEY FONT_KEY_GOTHIC_14
 #define HEALTH_SIDE_GAP 4   // gap between the time and each health column
 #define HEALTH_BOX_H 18     // line height for the GOTHIC_14 health text
-#define HEALTH_VALUE_DY 13  // vertical offset of the value below its label
+#define HEALTH_VALUE_DY 12  // vertical offset of the value below its label
 #define HEALTH_STACK_H 30   // total label+value stack height (used for centering)
 #define HEALTH_Y_OFFSET 0   // fine-tune vertical alignment vs the time
 #define WALK_DATA_X_SHIFT 3 // nudge the step value right of the calendar edge
+#define WALK_LABEL_X_SHIFT 2 // nudge the "Walk" label right of the calendar edge
 #define HEALTH_DATA_COLOR PBL_IF_COLOR_ELSE(GColorGreen, GColorWhite)
 
 static TextLayer *s_container_layer;
@@ -168,7 +169,8 @@ void time_layer_tick() {
     const int value_y = label_y + HEALTH_VALUE_DY;
     const int steps_w = text_left - HEALTH_SIDE_GAP;
     const int left_w = steps_w > 0 ? steps_w : 0;
-    text_layer_move_frame(s_walk_label_layer, GRect(0, label_y, left_w, HEALTH_BOX_H));
+    const int walk_label_x = left_w > WALK_LABEL_X_SHIFT ? WALK_LABEL_X_SHIFT : 0;
+    text_layer_move_frame(s_walk_label_layer, GRect(walk_label_x, label_y, left_w - walk_label_x, HEALTH_BOX_H));
     const int steps_x = left_w > WALK_DATA_X_SHIFT ? WALK_DATA_X_SHIFT : 0;
     text_layer_move_frame(s_steps_layer, GRect(steps_x, value_y, left_w - steps_x, HEALTH_BOX_H));
     const int sleep_x = text_left + content_w + HEALTH_SIDE_GAP;
