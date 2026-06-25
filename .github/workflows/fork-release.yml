@@ -1,0 +1,60 @@
+name: Fork Release PBW
+
+# Produces the RELEASE forecaswatch2.pbw (clean version, release UUID) for
+# uploading to the Rebble appstore. Run manually from the Actions tab, or by
+# pushing a v* tag.
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    env:
+      MISE_DISABLE_TOOLS: resvg
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Set up mise toolchain
+        uses: jdx/mise-action@dba19683ed58901619b14f395a24841710cb4925 # v4.1.0
+        with:
+          install: true
+          cache: true
+
+      - name: Install Pebble SDK
+        run: scripts/ensure-pebble-sdk.sh
+
+      - name: Build release .pbw
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          mise build release 2>&1 | tee build/build-release.log
+
+      - name: Verify artifact exists
+        run: test -f build/forecaswatch2.pbw
+
+      - name: Stamp .pbw with version + revision
+        id: rev
+        shell: bash
+        run: |
+          set -euo pipefail
+          short="$(git rev-parse --short HEAD)"
+          ver="$(node -p "require('./package.json').version")"
+          name="forecaswatch2-v${ver}-${short}"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          cp build/forecaswatch2.pbw "build/${name}.pbw"
+
+      - name: Upload release .pbw artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ steps.rev.outputs.name }}
+          path: build/${{ steps.rev.outputs.name }}.pbw
+          if-no-files-found: error
+          retention-days: 30
