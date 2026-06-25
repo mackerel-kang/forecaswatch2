@@ -62,7 +62,7 @@ static void main_window_load(Window *window) {
     int weather_status_y = time_y + time_h;
     int forecast_y = weather_status_y + WEATHER_STATUS_HEIGHT;
 
-    forecast_layer_create(window_layer, GRect(content_x, forecast_y, forecast_w, forecast_h));
+    forecast_layer_create(window_layer, GRect(content_x - 1, forecast_y, forecast_w, forecast_h)); // nudge graph 1px left
     weather_status_layer_create(window_layer, GRect(content_x, weather_status_y, content_w, WEATHER_STATUS_HEIGHT));
     time_layer_create(window_layer, GRect(content_x, time_y, content_w, time_h));
     calendar_layer_create(window_layer, GRect(content_x, calendar_y, content_w, calendar_h));
