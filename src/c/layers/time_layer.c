@@ -11,8 +11,10 @@
 
 // Health metrics flanking the main time (steps left, sleep right)
 #define HEALTH_FONT_KEY FONT_KEY_GOTHIC_14
-#define HEALTH_SIDE_GAP 4   // gap between the time and each health value
+#define HEALTH_SIDE_GAP 4   // gap between the time and each health column
 #define HEALTH_BOX_H 18     // line height for the GOTHIC_14 health text
+#define HEALTH_VALUE_DY 14  // vertical offset of the value below its label
+#define HEALTH_STACK_H 30   // total label+value stack height (used for centering)
 #define HEALTH_Y_OFFSET 0   // fine-tune vertical alignment vs the time
 
 static TextLayer *s_container_layer;
@@ -20,6 +22,8 @@ static TextLayer *s_time_layer;
 static TextLayer *s_am_pm_layer;
 static TextLayer *s_steps_layer;
 static TextLayer *s_sleep_layer;
+static TextLayer *s_walk_label_layer;
+static TextLayer *s_sleep_label_layer;
 static char s_steps_buf[8];
 static char s_sleep_buf[8];
 
@@ -75,10 +79,27 @@ void time_layer_create(Layer* parent_layer, GRect frame) {
     text_layer_set_font(s_sleep_layer, fonts_get_system_font(HEALTH_FONT_KEY));
     text_layer_set_text_alignment(s_sleep_layer, GTextAlignmentLeft);
 
+    // "Walk" / "Sleep" labels above their values
+    s_walk_label_layer = text_layer_create(GRect(0, 0, 40, HEALTH_BOX_H));
+    text_layer_set_background_color(s_walk_label_layer, GColorClear);
+    text_layer_set_text_color(s_walk_label_layer, GColorWhite);
+    text_layer_set_font(s_walk_label_layer, fonts_get_system_font(HEALTH_FONT_KEY));
+    text_layer_set_text_alignment(s_walk_label_layer, GTextAlignmentRight);
+    text_layer_set_text(s_walk_label_layer, "Walk");
+
+    s_sleep_label_layer = text_layer_create(GRect(0, 0, 40, HEALTH_BOX_H));
+    text_layer_set_background_color(s_sleep_label_layer, GColorClear);
+    text_layer_set_text_color(s_sleep_label_layer, GColorWhite);
+    text_layer_set_font(s_sleep_label_layer, fonts_get_system_font(HEALTH_FONT_KEY));
+    text_layer_set_text_alignment(s_sleep_label_layer, GTextAlignmentLeft);
+    text_layer_set_text(s_sleep_label_layer, "Sleep");
+
     layer_add_child(text_layer_get_layer(s_container_layer), text_layer_get_layer(s_time_layer));
     layer_add_child(text_layer_get_layer(s_time_layer), text_layer_get_layer(s_am_pm_layer));
     layer_add_child(text_layer_get_layer(s_container_layer), text_layer_get_layer(s_steps_layer));
     layer_add_child(text_layer_get_layer(s_container_layer), text_layer_get_layer(s_sleep_layer));
+    layer_add_child(text_layer_get_layer(s_container_layer), text_layer_get_layer(s_walk_label_layer));
+    layer_add_child(text_layer_get_layer(s_container_layer), text_layer_get_layer(s_sleep_label_layer));
     layer_add_child(parent_layer, text_layer_get_layer(s_container_layer));
     MEMORY_LOG_HEAP("after_time_layer_create");
 
@@ -138,14 +159,20 @@ void time_layer_tick() {
     }
     layer_set_hidden(text_layer_get_layer(s_am_pm_layer), !g_config->show_am_pm);
 
-    // Update and position the flanking health metrics in the gaps beside the time.
+    // Update and position the flanking health columns (label over value),
+    // centered vertically against the time, in the gaps beside it.
     health_refresh();
-    const int health_y = bounds.size.h / 2 - HEALTH_BOX_H / 2 + HEALTH_Y_OFFSET;
+    const int label_y = bounds.size.h / 2 - HEALTH_STACK_H / 2 + HEALTH_Y_OFFSET;
+    const int value_y = label_y + HEALTH_VALUE_DY;
     const int steps_w = text_left - HEALTH_SIDE_GAP;
-    text_layer_move_frame(s_steps_layer, GRect(0, health_y, steps_w > 0 ? steps_w : 0, HEALTH_BOX_H));
+    const int left_w = steps_w > 0 ? steps_w : 0;
+    text_layer_move_frame(s_walk_label_layer, GRect(0, label_y, left_w, HEALTH_BOX_H));
+    text_layer_move_frame(s_steps_layer, GRect(0, value_y, left_w, HEALTH_BOX_H));
     const int sleep_x = text_left + content_w + HEALTH_SIDE_GAP;
     const int sleep_w = bounds.size.w - sleep_x;
-    text_layer_move_frame(s_sleep_layer, GRect(sleep_x, health_y, sleep_w > 0 ? sleep_w : 0, HEALTH_BOX_H));
+    const int right_w = sleep_w > 0 ? sleep_w : 0;
+    text_layer_move_frame(s_sleep_label_layer, GRect(sleep_x, label_y, right_w, HEALTH_BOX_H));
+    text_layer_move_frame(s_sleep_layer, GRect(sleep_x, value_y, right_w, HEALTH_BOX_H));
 }
 
 void time_layer_refresh() {
@@ -158,6 +185,8 @@ void time_layer_destroy() {
     MEMORY_LOG_HEAP("time_layer_destroy:before");
     text_layer_destroy(s_steps_layer);
     text_layer_destroy(s_sleep_layer);
+    text_layer_destroy(s_walk_label_layer);
+    text_layer_destroy(s_sleep_label_layer);
     text_layer_destroy(s_time_layer);
     text_layer_destroy(s_container_layer);
     MEMORY_LOG_HEAP("time_layer_destroy:after");
