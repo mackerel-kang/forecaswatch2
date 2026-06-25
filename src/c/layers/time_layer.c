@@ -21,7 +21,7 @@
 #define HEALTH_Y_OFFSET 0   // fine-tune vertical alignment vs the time
 #define WALK_DATA_X_SHIFT 3 // nudge the step value right of the calendar edge
 #define WALK_LABEL_X_SHIFT 2 // nudge the "Walk" label right of the calendar edge
-#define HEALTH_DATA_COLOR PBL_IF_COLOR_ELSE(GColorGreen, GColorWhite)
+#define HEALTH_DATA_COLOR PBL_IF_COLOR_ELSE(GColorOrange, GColorWhite)
 
 static TextLayer *s_container_layer;
 static TextLayer *s_time_layer;   // hours
