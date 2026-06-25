@@ -87,7 +87,7 @@ static void battery_update_proc(Layer *layer, GContext *ctx) {
     // Draw the battery percentage, right-aligned just left of the glyph
     char pct_buffer[6];
     snprintf(pct_buffer, sizeof(pct_buffer), "%d%%", battery_level);
-    graphics_context_set_text_color(ctx, GColorWhite);
+    graphics_context_set_text_color(ctx, PBL_IF_COLOR_ELSE(GColorGreen, GColorWhite));
     graphics_draw_text(
         ctx, pct_buffer, fonts_get_system_font(BATTERY_PCT_FONT_KEY),
         GRect(0, glyph_top - PCT_TEXT_Y_NUDGE, glyph_left - PCT_TEXT_GAP + PCT_TEXT_X_SHIFT, BATTERY_GLYPH_H + PCT_TEXT_Y_NUDGE * 2),
