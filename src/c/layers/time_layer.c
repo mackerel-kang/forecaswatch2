@@ -9,10 +9,39 @@
 #define MT_TIME_LECO 2
 #define MT_AM_PM_LECO 2
 
+// Health metrics flanking the main time (steps left, sleep right)
+#define HEALTH_FONT_KEY FONT_KEY_GOTHIC_14
+#define HEALTH_SIDE_GAP 4   // gap between the time and each health value
+#define HEALTH_BOX_H 18     // line height for the GOTHIC_14 health text
+#define HEALTH_Y_OFFSET 0   // fine-tune vertical alignment vs the time
 
 static TextLayer *s_container_layer;
 static TextLayer *s_time_layer;
 static TextLayer *s_am_pm_layer;
+static TextLayer *s_steps_layer;
+static TextLayer *s_sleep_layer;
+static char s_steps_buf[8];
+static char s_sleep_buf[8];
+
+static void health_refresh() {
+    const time_t start = time_start_of_today();
+    const time_t now = time(NULL);
+
+    if (health_service_metric_accessible(HealthMetricStepCount, start, now) & HealthServiceAccessibilityMaskAvailable) {
+        snprintf(s_steps_buf, sizeof(s_steps_buf), "%d", (int)health_service_sum_today(HealthMetricStepCount));
+    } else {
+        snprintf(s_steps_buf, sizeof(s_steps_buf), "-");
+    }
+    text_layer_set_text(s_steps_layer, s_steps_buf);
+
+    if (health_service_metric_accessible(HealthMetricSleepSeconds, start, now) & HealthServiceAccessibilityMaskAvailable) {
+        const int secs = (int)health_service_sum_today(HealthMetricSleepSeconds);
+        snprintf(s_sleep_buf, sizeof(s_sleep_buf), "%dh%02dm", secs / 3600, (secs % 3600) / 60);
+    } else {
+        snprintf(s_sleep_buf, sizeof(s_sleep_buf), "-");
+    }
+    text_layer_set_text(s_sleep_layer, s_sleep_buf);
+}
 
 void time_layer_create(Layer* parent_layer, GRect frame) {
     s_container_layer = text_layer_create(frame);
@@ -33,8 +62,23 @@ void time_layer_create(Layer* parent_layer, GRect frame) {
     text_layer_set_text(s_am_pm_layer, "PM");
     text_layer_set_text_alignment(s_am_pm_layer, GTextAlignmentLeft);
 
+    // Steps (left of time) and sleep (right of time), smallest font
+    s_steps_layer = text_layer_create(GRect(0, 0, 40, HEALTH_BOX_H));
+    text_layer_set_background_color(s_steps_layer, GColorClear);
+    text_layer_set_text_color(s_steps_layer, GColorWhite);
+    text_layer_set_font(s_steps_layer, fonts_get_system_font(HEALTH_FONT_KEY));
+    text_layer_set_text_alignment(s_steps_layer, GTextAlignmentRight);
+
+    s_sleep_layer = text_layer_create(GRect(0, 0, 40, HEALTH_BOX_H));
+    text_layer_set_background_color(s_sleep_layer, GColorClear);
+    text_layer_set_text_color(s_sleep_layer, GColorWhite);
+    text_layer_set_font(s_sleep_layer, fonts_get_system_font(HEALTH_FONT_KEY));
+    text_layer_set_text_alignment(s_sleep_layer, GTextAlignmentLeft);
+
     layer_add_child(text_layer_get_layer(s_container_layer), text_layer_get_layer(s_time_layer));
     layer_add_child(text_layer_get_layer(s_time_layer), text_layer_get_layer(s_am_pm_layer));
+    layer_add_child(text_layer_get_layer(s_container_layer), text_layer_get_layer(s_steps_layer));
+    layer_add_child(text_layer_get_layer(s_container_layer), text_layer_get_layer(s_sleep_layer));
     layer_add_child(parent_layer, text_layer_get_layer(s_container_layer));
     MEMORY_LOG_HEAP("after_time_layer_create");
 
@@ -93,6 +137,15 @@ void time_layer_tick() {
         text_layer_move_frame(s_am_pm_layer, GRect(time_size.w, am_pm_y, 30, time_size.h));
     }
     layer_set_hidden(text_layer_get_layer(s_am_pm_layer), !g_config->show_am_pm);
+
+    // Update and position the flanking health metrics in the gaps beside the time.
+    health_refresh();
+    const int health_y = bounds.size.h / 2 - HEALTH_BOX_H / 2 + HEALTH_Y_OFFSET;
+    const int steps_w = text_left - HEALTH_SIDE_GAP;
+    text_layer_move_frame(s_steps_layer, GRect(0, health_y, steps_w > 0 ? steps_w : 0, HEALTH_BOX_H));
+    const int sleep_x = text_left + content_w + HEALTH_SIDE_GAP;
+    const int sleep_w = bounds.size.w - sleep_x;
+    text_layer_move_frame(s_sleep_layer, GRect(sleep_x, health_y, sleep_w > 0 ? sleep_w : 0, HEALTH_BOX_H));
 }
 
 void time_layer_refresh() {
@@ -103,6 +156,8 @@ void time_layer_refresh() {
 
 void time_layer_destroy() {
     MEMORY_LOG_HEAP("time_layer_destroy:before");
+    text_layer_destroy(s_steps_layer);
+    text_layer_destroy(s_sleep_layer);
     text_layer_destroy(s_time_layer);
     text_layer_destroy(s_container_layer);
     MEMORY_LOG_HEAP("time_layer_destroy:after");
