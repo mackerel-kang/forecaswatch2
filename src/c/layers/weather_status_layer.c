@@ -3,22 +3,21 @@
 #include "c/appendix/config.h"
 #include "c/appendix/memory_log.h"
 
-#define FONT_18_OFFSET 7
 #define FONT_14_OFFSET 3
 #define CITY_INIT_WIDTH 100
 #define MARGIN 2
 
 // emery: use larger text and arrow geometry
 #ifdef PBL_PLATFORM_EMERY
-#define CITY_FONT_KEY FONT_KEY_GOTHIC_18
-#define SUN_EVENT_FONT_KEY FONT_KEY_GOTHIC_18
+#define CITY_FONT_KEY FONT_KEY_GOTHIC_14_BOLD
+#define SUN_EVENT_FONT_KEY FONT_KEY_GOTHIC_14_BOLD
 #define ARROW_H 10
 #define ARROW_HEAD_H 4
 #define ARROW_HEAD_W 3
 #define ARROW_W 8
 #else
-#define CITY_FONT_KEY FONT_KEY_GOTHIC_14
-#define SUN_EVENT_FONT_KEY FONT_KEY_GOTHIC_14
+#define CITY_FONT_KEY FONT_KEY_GOTHIC_14_BOLD
+#define SUN_EVENT_FONT_KEY FONT_KEY_GOTHIC_14_BOLD
 #define ARROW_H 8
 #define ARROW_HEAD_H 3
 #define ARROW_HEAD_W 2
@@ -33,7 +32,7 @@ static GRect frame_sun_event;
 static int s_curr_num_w;
 static int s_curr_deg_w;
 static int s_curr_h;
-#define CURR_TEMP_FONT_KEY FONT_KEY_GOTHIC_18
+#define CURR_TEMP_FONT_KEY FONT_KEY_GOTHIC_14_BOLD
 #define DEGREE_DROP_Y 1
 #define CURR_TEMP_X (MARGIN + 8)   // left x of the current-temp number
 
@@ -74,8 +73,8 @@ static void city_layer_refresh() {
     int h;
     // emery: align city text baseline with 18px font metrics instead of 14px metrics.
 #ifdef PBL_PLATFORM_EMERY
-    y = -FONT_18_OFFSET;
-    h = size.h + FONT_18_OFFSET;
+    y = -FONT_14_OFFSET;
+    h = size.h + FONT_14_OFFSET;
 #else
     y = -FONT_14_OFFSET;
     h = size.h + FONT_14_OFFSET;
@@ -94,7 +93,7 @@ static void current_temp_layer_refresh() {
     // Dynamic resizing of the number
     text_layer_move_frame(s_current_temp_layer, GRect(0, 0, 100, 100));  // Make it big so content doesn't get clipped
     GSize size = text_layer_get_content_size(s_current_temp_layer);
-    text_layer_move_frame(s_current_temp_layer, GRect(CURR_TEMP_X, -FONT_18_OFFSET, size.w, size.h));
+    text_layer_move_frame(s_current_temp_layer, GRect(CURR_TEMP_X, -FONT_14_OFFSET, size.w, size.h));
     s_curr_num_w = size.w;
     s_curr_h = size.h;
 
@@ -103,7 +102,7 @@ static void current_temp_layer_refresh() {
     const GRect mbox = GRect(0, 0, 100, 40);
     s_curr_deg_w = graphics_text_layout_get_content_size("°", font, mbox, GTextOverflowModeFill, GTextAlignmentLeft).w;
     const int deg_c_w = graphics_text_layout_get_content_size("°C", font, mbox, GTextOverflowModeFill, GTextAlignmentLeft).w;
-    frame_curr_temp = GRect(0, -FONT_18_OFFSET, CURR_TEMP_X + size.w + deg_c_w, size.h);
+    frame_curr_temp = GRect(0, -FONT_14_OFFSET, CURR_TEMP_X + size.w + deg_c_w, size.h);
 }
 
 static void sun_event_layer_refresh() {
@@ -126,7 +125,7 @@ static void sun_event_layer_refresh() {
     int y;
     // emery: align sun-event text baseline with 18px font metrics instead of 14px metrics.
 #ifdef PBL_PLATFORM_EMERY
-    y = -FONT_18_OFFSET;
+    y = -FONT_14_OFFSET;
 #else
     y = -FONT_14_OFFSET;
 #endif
@@ -140,7 +139,7 @@ static void weather_status_layer_init(GRect bounds) {
     int w = bounds.size.w;
 
     // Current temperature
-    s_current_temp_layer = text_layer_create(GRect(MARGIN, -FONT_18_OFFSET, 40, 25));
+    s_current_temp_layer = text_layer_create(GRect(MARGIN, -FONT_14_OFFSET, 40, 25));
     text_layer_set_background_color(s_current_temp_layer, GColorClear);
     text_layer_set_text_alignment(s_current_temp_layer, GTextAlignmentLeft);
     text_layer_set_text_color(s_current_temp_layer, GColorWhite);
@@ -154,7 +153,7 @@ static void weather_status_layer_init(GRect bounds) {
     text_layer_set_font(s_city_layer, fonts_get_system_font(CITY_FONT_KEY));
 
     // Time of next sun event (sunrise/sunset)
-    s_next_sun_event_layer = text_layer_create(GRect(w - MARGIN - 6 - 40, 4 - FONT_18_OFFSET, 40, 25));
+    s_next_sun_event_layer = text_layer_create(GRect(w - MARGIN - 6 - 40, 4 - FONT_14_OFFSET, 40, 25));
     text_layer_set_background_color(s_next_sun_event_layer, GColorClear);
     text_layer_set_text_alignment(s_next_sun_event_layer, GTextAlignmentLeft);
     text_layer_set_text_color(s_next_sun_event_layer, GColorWhite);
@@ -192,7 +191,7 @@ static void weather_status_update_proc(Layer *layer, GContext *ctx) {
 
     // Draw the "°C" suffix after the current-temp number, with "°" nudged down.
     const GFont temp_font = fonts_get_system_font(CURR_TEMP_FONT_KEY);
-    const int base_y = -FONT_18_OFFSET;
+    const int base_y = -FONT_14_OFFSET;
     const int deg_x = CURR_TEMP_X + s_curr_num_w;
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, "°", temp_font,
