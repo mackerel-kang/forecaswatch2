@@ -35,6 +35,7 @@ static int s_curr_deg_w;
 static int s_curr_h;
 #define CURR_TEMP_FONT_KEY FONT_KEY_GOTHIC_18
 #define DEGREE_DROP_Y 1
+#define CURR_TEMP_X (MARGIN + 8)   // left x of the current-temp number
 
 static Layer *s_weather_status_layer;
 static TextLayer *s_city_layer;
@@ -93,7 +94,7 @@ static void current_temp_layer_refresh() {
     // Dynamic resizing of the number
     text_layer_move_frame(s_current_temp_layer, GRect(0, 0, 100, 100));  // Make it big so content doesn't get clipped
     GSize size = text_layer_get_content_size(s_current_temp_layer);
-    text_layer_move_frame(s_current_temp_layer, GRect(MARGIN, -FONT_18_OFFSET, size.w, size.h));
+    text_layer_move_frame(s_current_temp_layer, GRect(CURR_TEMP_X, -FONT_18_OFFSET, size.w, size.h));
     s_curr_num_w = size.w;
     s_curr_h = size.h;
 
@@ -102,7 +103,7 @@ static void current_temp_layer_refresh() {
     const GRect mbox = GRect(0, 0, 100, 40);
     s_curr_deg_w = graphics_text_layout_get_content_size("°", font, mbox, GTextOverflowModeFill, GTextAlignmentLeft).w;
     const int deg_c_w = graphics_text_layout_get_content_size("°C", font, mbox, GTextOverflowModeFill, GTextAlignmentLeft).w;
-    frame_curr_temp = GRect(0, -FONT_18_OFFSET, MARGIN + size.w + deg_c_w, size.h);
+    frame_curr_temp = GRect(0, -FONT_18_OFFSET, CURR_TEMP_X + size.w + deg_c_w, size.h);
 }
 
 static void sun_event_layer_refresh() {
@@ -192,7 +193,7 @@ static void weather_status_update_proc(Layer *layer, GContext *ctx) {
     // Draw the "°C" suffix after the current-temp number, with "°" nudged down.
     const GFont temp_font = fonts_get_system_font(CURR_TEMP_FONT_KEY);
     const int base_y = -FONT_18_OFFSET;
-    const int deg_x = MARGIN + s_curr_num_w;
+    const int deg_x = CURR_TEMP_X + s_curr_num_w;
     graphics_context_set_text_color(ctx, GColorWhite);
     graphics_draw_text(ctx, "°", temp_font,
         GRect(deg_x, base_y + DEGREE_DROP_Y, s_curr_deg_w + 4, s_curr_h),
