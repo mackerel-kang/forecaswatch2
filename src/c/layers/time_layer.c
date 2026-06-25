@@ -71,7 +71,7 @@ void time_layer_create(Layer* parent_layer, GRect frame) {
     text_layer_set_background_color(s_steps_layer, GColorClear);
     text_layer_set_text_color(s_steps_layer, GColorWhite);
     text_layer_set_font(s_steps_layer, fonts_get_system_font(HEALTH_FONT_KEY));
-    text_layer_set_text_alignment(s_steps_layer, GTextAlignmentRight);
+    text_layer_set_text_alignment(s_steps_layer, GTextAlignmentLeft);
 
     s_sleep_layer = text_layer_create(GRect(0, 0, 40, HEALTH_BOX_H));
     text_layer_set_background_color(s_sleep_layer, GColorClear);
@@ -84,7 +84,7 @@ void time_layer_create(Layer* parent_layer, GRect frame) {
     text_layer_set_background_color(s_walk_label_layer, GColorClear);
     text_layer_set_text_color(s_walk_label_layer, GColorWhite);
     text_layer_set_font(s_walk_label_layer, fonts_get_system_font(HEALTH_FONT_KEY));
-    text_layer_set_text_alignment(s_walk_label_layer, GTextAlignmentRight);
+    text_layer_set_text_alignment(s_walk_label_layer, GTextAlignmentLeft);
     text_layer_set_text(s_walk_label_layer, "Walk");
 
     s_sleep_label_layer = text_layer_create(GRect(0, 0, 40, HEALTH_BOX_H));
