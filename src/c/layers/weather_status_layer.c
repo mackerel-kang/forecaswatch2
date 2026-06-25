@@ -34,7 +34,7 @@ static int s_curr_num_w;
 static int s_curr_deg_w;
 static int s_curr_h;
 #define CURR_TEMP_FONT_KEY FONT_KEY_GOTHIC_18
-#define DEGREE_DROP_Y 2
+#define DEGREE_DROP_Y 1
 
 static Layer *s_weather_status_layer;
 static TextLayer *s_city_layer;
