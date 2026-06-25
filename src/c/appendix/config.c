@@ -75,13 +75,8 @@ int config_format_time(char *s, size_t maxsize, const struct tm * tm_p) {
 }
 
 int config_axis_hour(int hour) {
-    if (g_config->axis_12h) {
-        hour = hour % 12;
-        hour = hour == 0 ? 12 : hour;
-    }
-    else 
-        hour = hour % 24;
-    return hour;
+    // Forecast x-axis always uses 24-hour format (ignores the axis_12h setting).
+    return hour % 24;
 }
 
 int config_n_today() {
