@@ -653,11 +653,11 @@ static void forecast_update_proc(Layer *layer, GContext *ctx)
     const int lo_y = 22;
 #endif
     graphics_draw_text(ctx, s_buffer_hi,
-                       fonts_get_system_font(FONT_KEY_GOTHIC_18),
+                       fonts_get_system_font(FONT_KEY_GOTHIC_14),
                        GRect(0, hi_y, s_label_strip_w, hi_size.h),
                        GTextOverflowModeFill, GTextAlignmentRight, NULL);
     graphics_draw_text(ctx, s_buffer_lo,
-                       fonts_get_system_font(FONT_KEY_GOTHIC_18),
+                       fonts_get_system_font(FONT_KEY_GOTHIC_14),
                        GRect(0, lo_y, s_label_strip_w, lo_size.h),
                        GTextOverflowModeFill, GTextAlignmentRight, NULL);
     MEMORY_HEAP_PROBE_LOG_MIN(&redraw_probe);
@@ -666,7 +666,7 @@ static void forecast_update_proc(Layer *layer, GContext *ctx)
 
 static int temp_label_string_width(const char *text)
 {
-    const GFont font = fonts_get_system_font(FONT_KEY_GOTHIC_18);
+    const GFont font = fonts_get_system_font(FONT_KEY_GOTHIC_14);
     const GRect box = GRect(0, 0, TEMP_LABEL_MEASURE_BOX_W, TEMP_LABEL_MEASURE_BOX_H);
     const GSize sz = graphics_text_layout_get_content_size(text, font, box, GTextOverflowModeFill,
                                                            GTextAlignmentRight);
@@ -675,7 +675,7 @@ static int temp_label_string_width(const char *text)
 
 static GSize temp_label_string_size(const char *text)
 {
-    const GFont font = fonts_get_system_font(FONT_KEY_GOTHIC_18);
+    const GFont font = fonts_get_system_font(FONT_KEY_GOTHIC_14);
     const GRect box = GRect(0, 0, TEMP_LABEL_MEASURE_BOX_W, TEMP_LABEL_MEASURE_BOX_H);
     return graphics_text_layout_get_content_size(text, font, box, GTextOverflowModeFill,
                                                  GTextAlignmentRight);
