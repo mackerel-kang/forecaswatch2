@@ -9,6 +9,8 @@
 #define MT_TIME_LECO 2
 #define MT_AM_PM_LECO 2
 #define COLON_UP 2  // raise the time colon by this many px
+#define TIME_LEFT_SHIFT 1   // nudge the whole time block left
+#define SLEEP_LEFT_SHIFT 1  // nudge the right-aligned sleep column left
 
 // Health metrics flanking the main time (steps left, sleep right)
 #define HEALTH_FONT_KEY FONT_KEY_GOTHIC_14
@@ -178,8 +180,8 @@ void time_layer_tick() {
     }
 #endif
 
-    // Position hours, colon (raised), minutes left-to-right
-    int x = text_left;
+    // Position hours, colon (raised), minutes left-to-right (nudged left)
+    int x = text_left - TIME_LEFT_SHIFT;
     text_layer_move_frame(s_time_layer, GRect(x, text_top, hh_size.w + 2, time_h));
     x += hh_size.w;
     text_layer_move_frame(s_colon_layer, GRect(x, text_top - COLON_UP, colon_size.w + 2, time_h));
@@ -194,7 +196,7 @@ void time_layer_tick() {
             am_pm_y += MT_AM_PM_LECO;
         }
 #endif
-        text_layer_move_frame(s_am_pm_layer, GRect(text_left + time_w, am_pm_y, 30, time_h));
+        text_layer_move_frame(s_am_pm_layer, GRect(text_left - TIME_LEFT_SHIFT + time_w, am_pm_y, 30, time_h));
     }
     layer_set_hidden(text_layer_get_layer(s_am_pm_layer), !g_config->show_am_pm);
 
@@ -212,8 +214,9 @@ void time_layer_tick() {
     const int sleep_x = text_left + content_w + HEALTH_SIDE_GAP;
     const int sleep_w = bounds.size.w - sleep_x;
     const int right_w = sleep_w > 0 ? sleep_w : 0;
-    text_layer_move_frame(s_sleep_label_layer, GRect(sleep_x, label_y, right_w, HEALTH_BOX_H));
-    text_layer_move_frame(s_sleep_layer, GRect(sleep_x, value_y, right_w, HEALTH_BOX_H));
+    const int sleep_right_w = right_w > SLEEP_LEFT_SHIFT ? right_w - SLEEP_LEFT_SHIFT : right_w;
+    text_layer_move_frame(s_sleep_label_layer, GRect(sleep_x, label_y, sleep_right_w, HEALTH_BOX_H));
+    text_layer_move_frame(s_sleep_layer, GRect(sleep_x, value_y, sleep_right_w, HEALTH_BOX_H));
 }
 
 void time_layer_refresh() {
